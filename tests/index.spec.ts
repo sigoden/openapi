@@ -1,5 +1,5 @@
-import { foo } from "../src";
+import { kisa } from "../src";
 
-test("foo", () => {
-  expect(foo()).toEqual("foo");
+test("kisa", () => {
+  expect(kisa()).toEqual("kisa");
 });

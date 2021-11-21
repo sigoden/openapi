@@ -1,7 +1,14 @@
 {
-  "name": "typescript-template",
+  "name": "kisa",
   "version": "0.1.0",
   "description": "",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/kisa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/kisa.git"
+  },
+  "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -20,9 +27,6 @@
     "clean": "rimraf dist",
     "prepublishOnly": "npm run -s clean && npm run -s build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
