@@ -26,9 +26,8 @@
       }
     }
   },
-  createPost: { @endpoint({summary:"create post"})
+  createPost: { @endpoint({summary:"create post", "x-middlewares": ["ratelimit"]})
     route: 'POST /posts',
-    "x-middlewares": ["ratelimit"],
     req: {
       body: {
         title: 'How to write blog?',

@@ -10,6 +10,12 @@ const { generate } = require("typegen-openapi");
 const yargs = require("yargs")
   .help()
   .usage("$0 <input> [output]", "Generate type file for kisa")
+  .option("export-operations", {
+    alias: "e",
+    type: "boolean",
+    default: true,
+    describe: "Whether export operations",
+  })
   .positional("input", {
     type: "string",
     describe: "openapi json/yaml/jsona file",
@@ -42,17 +48,21 @@ import {
   KisaMiddlewares,
   KisaMiddleware,
   KisaSecurityHandlers,
+  Operation,
 } from "kisa";
 
 `;
 
   content += generate(spec, {
     handlers: `export interface Handlers<S> extends KisaHandlers<S> {<% list.forEach(function(name) { %>
-  <%= name %>: KisaHandler<S, <%= cases.pascalCase(name) %>Req>; <% });%>}`,
+  <%= name %>: KisaHandler<S, ReqTypes.<%= cases.pascalCase(name) %>>; <% });%>
+}`,
     middlewares: `export interface Middlewares<S> extends KisaMiddlewares<S> {<% list.forEach(function(name) { %>
-  <%= name %>: KisaMiddleware<S>; <% });%>}`,
+  <%= name %>: KisaMiddleware<S>; <% });%>
+}`,
     securityHandlers: `export interface SecurityHandlers<S> extends KisaSecurityHandlers<S> {<% list.forEach(function(name) { %>
-  <%= name %>: (config: string[]) => KisaMiddleware<S>; <% });%>}`,
+  <%= name %>: (config: string[]) => KisaMiddleware<S>; <% });%>
+}`,
   });
 
   return content;
@@ -62,10 +72,12 @@ function run(argv) {
   const spec = load(argv.input);
   let content = render(spec);
   const operations = parseOperations(spec);
-  content += `
+  if (argv.exportOperations) {
+    content += `
 
-export const OPERATIONS = \`${JSON.stringify(operations)}\`;
+export const OPERATIONS: Operation[] = ${JSON.stringify(operations)};
 `;
+  }
   if (argv.output) {
     fs.writeFileSync(argv.output, content);
   } else {

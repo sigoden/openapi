@@ -1,5 +1,4 @@
 import Ajv, { Options as AjvOptions, ErrorObject as AjvErrorObject } from "ajv";
-import lodashMerge from "lodash.merge";
 import lodashGet from "lodash.get";
 import addFormats from "ajv-formats";
 import { SchemaObject } from "jsona-openapi-types";
@@ -12,7 +11,7 @@ import {
 } from "jsona-openapi-types";
 
 const METHODS = ["get", "put", "delete", "post", "options"];
-const PARAMETER_MAP = { header: "headers", query: "query", path: "params" };
+const PARAMETERS = { header: "headers", query: "query", path: "params" };
 
 export const AJV_OPTIONS: AjvOptions = {
   useDefaults: true,
@@ -20,10 +19,10 @@ export const AJV_OPTIONS: AjvOptions = {
   keywords: ["example"],
 };
 
-export function parseOperations(spec: Spec): BaseOperation[] {
+export function parseOperations(spec: Spec): Operation[] {
   deref(spec);
   const invalidOperations: InvalidOperation[] = [];
-  const operations: BaseOperation[] = [];
+  const operations: Operation[] = [];
   for (const [path, pathItem] of Object.entries(spec.paths)) {
     for (const method of METHODS) {
       const operation = pathItem[method] as OperationObject;
@@ -33,14 +32,14 @@ export function parseOperations(spec: Spec): BaseOperation[] {
         continue;
       }
       const xProps = Object.keys(operation)
-        .filter((key) => key.startsWith("x-") || key.startsWith("x"))
+        .filter((key) => key.startsWith("x-") || key.startsWith("X-"))
         .reduce((a, c) => {
-          a[c] = operation[c];
+          a[c.toLowerCase()] = operation[c];
           return a;
         }, {});
       const reqSchema = createDefaultSchema();
       const addParamaterSchema = (key, obj: ParameterObject) => {
-        const dataKey = PARAMETER_MAP[key];
+        const dataKey = PARAMETERS[key];
         if (!dataKey) return;
         let data = reqSchema.properties[dataKey];
         if (!data) {
@@ -73,6 +72,7 @@ export function parseOperations(spec: Spec): BaseOperation[] {
           status,
           "content",
           "application/json",
+          "schema",
         ]);
         if (statusSchema) resSchema[status] = statusSchema;
       }
@@ -94,50 +94,59 @@ export function parseOperations(spec: Spec): BaseOperation[] {
   return operations;
 }
 
-export function getOperations(spec: Spec, options: Options = {}): Operation[] {
-  const defaultOptions: Options = {
-    ajvOptions: { ...AJV_OPTIONS },
-    createResValidate: false,
-  };
-  options = lodashMerge(defaultOptions, options);
-  const operations = parseOperations(spec);
-  const ajv = options.ajv ? options.ajv : createAjv(options.ajvOptions);
-  return mapOperations(operations, ajv, options.createResValidate);
+export function createReqValiateFn(ajv: Ajv, reqSchema: SchemaObject) {
+  const ajvValidate = ajv.compile(reqSchema);
+  return ((data) => {
+    ajvValidate(data);
+    return ajvValidate.errors;
+  }) as ValidateFn;
 }
 
-export function mapOperations(
-  operations: BaseOperation[],
-  ajv: Ajv,
-  createResValidate = false
-): Operation[] {
-  return operations.map((operation) => {
-    const { reqSchema, resSchema } = operation;
-    const ajvValidate = ajv.compile(reqSchema);
-    const validate: ValidateFn = (data) => {
-      ajvValidate(data);
-      return ajvValidate.errors;
-    };
-    let validateRes: ValidateResFn;
-    if (createResValidate) {
-      const ajvValidates = Object.keys(resSchema).reduce((acc, status) => {
-        acc[status] = ajv.compile(resSchema[status]);
-        return acc;
-      }, {});
-      validateRes = (status, body) => {
-        const validate = ajvValidates[status];
-        if (validate) {
-          validate(body);
-          return validate.errors;
-        }
-      };
+export function createResValiateFn(ajv: Ajv, resSchema: SchemaObjectRecord) {
+  const ajvValidates = Object.keys(resSchema).reduce((acc, status) => {
+    acc[status] = ajv.compile(resSchema[status]);
+    return acc;
+  }, {});
+  return ((status, body) => {
+    const validate = ajvValidates[status];
+    if (validate) {
+      validate(body);
+      return validate.errors;
     }
-    return {
-      ...operation,
-      validate,
-      validateRes,
-    };
-  });
+  }) as ValidateResFn;
 }
+
+export function createAjv(options: AjvOptions = AJV_OPTIONS): Ajv {
+  const ajv = new Ajv(options);
+  addFormats(ajv);
+  return ajv;
+}
+
+export interface Operation {
+  path: string;
+  method: string;
+  operationId: string;
+  security: SecurityRequirementObject[];
+  xProps: { [k: string]: any };
+  reqSchema: SchemaObject;
+  resSchema: SchemaObjectRecord;
+}
+
+export interface SchemaObjectRecord {
+  [k: string]: SchemaObject;
+}
+
+export type ValidateFn = (data: ValidateData) => AjvErrorObject[];
+export type ValidateResFn = (status: number, data: any) => AjvErrorObject[];
+
+export interface ValidateData {
+  headers?: { [k: string]: any };
+  params?: { [k: string]: any };
+  query?: { [k: string]: any };
+  body?: any;
+}
+
+export type { AjvErrorObject, AjvOptions };
 
 export interface InvalidOperation {
   method: string;
@@ -158,64 +167,3 @@ export class InvalidSpecError extends Error {
 function createDefaultSchema() {
   return { type: "object", properties: {}, required: [] };
 }
-
-export function createAjv(options: AjvOptions = AJV_OPTIONS): Ajv {
-  const ajv = new Ajv(options);
-  addFormats(ajv);
-  return ajv;
-}
-
-export interface Options {
-  /**
-   * Whether create response body validate
-   * @default false
-   */
-  createResValidate?: boolean;
-  /**
-   * Pass ajv instance
-   */
-  ajv?: Ajv;
-  /*
-   * Pass thoungh ajv options see https://ajv.js.org/#options
-   */
-  ajvOptions?: AjvOptions;
-}
-
-export enum Method {
-  Get = "get",
-  Put = "put",
-  Delete = "delete",
-  Post = "post",
-  Patch = "patch",
-}
-
-export interface BaseOperation {
-  path: string;
-  method: string;
-  operationId: string;
-  security: SecurityRequirementObject[];
-  xProps: { [k: string]: any };
-  reqSchema: SchemaObject;
-  resSchema: SchemaObjectRecord;
-}
-
-export interface SchemaObjectRecord {
-  [k: string]: SchemaObject;
-}
-
-export interface Operation extends BaseOperation {
-  validate: ValidateFn;
-  validateRes?: ValidateResFn;
-}
-
-export type ValidateFn = (data: ValidateData) => AjvErrorObject[];
-export type ValidateResFn = (status: number, data: any) => AjvErrorObject[];
-
-export interface ValidateData {
-  headers?: { [k: string]: any };
-  params?: { [k: string]: any };
-  query?: { [k: string]: any };
-  body?: any;
-}
-
-export type { AjvErrorObject, AjvOptions };

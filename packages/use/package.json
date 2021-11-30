@@ -35,7 +35,6 @@
     "ajv-formats": "^2.1.1",
     "jsona-openapi-types": "workspace:^",
     "jsona-openapi-deref": "workspace:^",
-    "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.2"
+    "lodash.get": "^4.4.2"
   }
 }

@@ -1,26 +1,20 @@
 /* eslint-disable @typescript-eslint/no-var-requires  */
-import { getOperations } from "../src";
+import { createAjv, createReqValiateFn, parseOperations } from "../src";
 
 const petstore = require("../../deref/tests/spec/petstore.json");
-const routes = getOperations(petstore);
+const petstoreDeref = require("../../deref/tests/spec/petstore-deref.json");
+const operations = parseOperations(petstore);
+const lodashGet = require("lodash.get");
 
+const ajv = createAjv();
 test("parsed route object", () => {
-  const { method, operationId, path, security, xProps, validate } = routes.find(
-    (v) => v.operationId === "updatePet"
-  );
-  expect({ method, operationId, path, security, xProps }).toEqual({
-    method: "put",
-    operationId: "updatePet",
-    path: "/pet",
-    security: [
-      {
-        petstore_auth: ["write:pets", "read:pets"],
-      },
-    ],
-    xProps: {},
-  });
+  const operation = operations.find((v) => v.operationId === "updatePet");
+  expect(operation).toMatchSnapshot();
   expect(
-    validate({
+    createReqValiateFn(
+      ajv,
+      operation.reqSchema
+    )({
       body: {
         id: 10,
         name: "doggie",
@@ -42,8 +36,11 @@ test("parsed route object", () => {
 });
 
 test("validate query and params", () => {
-  const route = routes.find((v) => v.operationId === "updatePetWithForm");
-  const errors1 = route.validate({
+  const { reqSchema } = operations.find(
+    (v) => v.operationId === "updatePetWithForm"
+  );
+  const validate = createReqValiateFn(ajv, reqSchema);
+  const errors1 = validate({
     query: {
       name: "Tim",
       status: "available",
@@ -53,7 +50,7 @@ test("validate query and params", () => {
     },
   });
   expect(errors1).toEqual(null);
-  const errors2 = route.validate({
+  const errors2 = validate({
     query: {
       name: "Tim",
       status: "available",
@@ -76,7 +73,7 @@ test("validate query and params", () => {
 });
 
 test("collect xprops", () => {
-  const route = routes.find((v) => v.operationId === "getInventory");
+  const route = operations.find((v) => v.operationId === "getInventory");
   expect(route.xProps).toEqual({
     "x-swagger-router-controller": "OrderController",
   });

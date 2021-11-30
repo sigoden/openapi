@@ -1,16 +1,14 @@
-import Koa, { ParameterizedContext, DefaultState, Middleware } from "koa";
+import Koa, { ParameterizedContext, DefaultState, Middleware, Next } from "koa";
 import {
-  BaseOperation,
-  mapOperations,
   createAjv,
   AjvErrorObject,
   Operation,
+  createReqValiateFn,
 } from "use-openapi";
 import Router from "@koa/router";
-import type { Spec } from "jsona-openapi-types";
 
 export interface KisaHandlers<S> {
-  [k: string]: (ctx: ParameterizedContext<S>) => Promise<void>;
+  [k: string]: (ctx: ParameterizedContext<S>, next?: Next) => Promise<void>;
 }
 
 export interface KisaMiddlewares<S> {
@@ -21,20 +19,15 @@ export interface KisaSecurityHandlers<S> {
   [k: string]: (config: string[]) => Middleware<S>;
 }
 
-export type OpenApiSpec = Spec;
-
-export { Middleware as KisaMiddleware, Koa, Router };
+export { Middleware as KisaMiddleware, Koa, Router, Operation };
 
 export interface kisaConfig<H, M, S> {
-  prefix: string;
-  operations: BaseOperation[];
+  prefix?: string;
   handlers: H;
-  middlewares: M;
-  securityHandlers: S;
-  handlerHook: (
-    ctx: ParameterizedContext<S>,
-    operation: Operation
-  ) => Promise<void>;
+  middlewares?: M;
+  securityHandlers?: S;
+  hook?: (ctx: ParameterizedContext<S>, operation: Operation) => Promise<void>;
+  operations: Operation[];
   errorHandlers: {
     routes: (error: RoutesError) => void;
     validate: (errors: AjvErrorObject[]) => void;
@@ -52,63 +45,61 @@ export default function useKisa<
   S extends KisaSecurityHandlers<T>
 >(kisa: Partial<kisaConfig<H, M, S>> = {}) {
   const mountKisa = async (router: Router) => {
-    const missMiddlewares = [];
     const missHandlers = [];
-    const missSecurityHandlers = [];
-    const prefix = kisa.prefix.endsWith("/")
-      ? kisa.prefix.slice(0, -1)
-      : kisa.prefix;
+    const missMiddlewares = new Set<string>();
+    const missSecurityHandlers = new Set<string>();
+    const prefix = sanitizePrefix(kisa.prefix);
     const ajv = createAjv();
 
-    const operations = mapOperations(kisa.operations, ajv, false);
-
-    for (const operation of operations) {
-      const { method, operationId, path, security, xProps } = operation;
+    for (const operation of kisa.operations) {
+      const { method, operationId, path, security, xProps, reqSchema } =
+        operation;
       let mountable = true;
-      const handler = kisa.handlers[operation.operationId];
+      const handler = (kisa.handlers || {})[operation.operationId];
       if (!handler) {
         missHandlers.push({ method, operationId, path });
         mountable = false;
       }
 
-      const apiMiddlrewares = [];
+      const mountMiddlewares = [];
 
       const xMids = xProps["x-middlewares"];
       if (Array.isArray(xMids)) {
         for (const name of xMids) {
-          const middleware = kisa.middlewares[name];
+          const middleware = (kisa.middlewares || {})[name];
           if (!middleware) {
-            missMiddlewares.push(name);
+            missMiddlewares.add(name);
             mountable = false;
           }
-          apiMiddlrewares.push(middleware);
+          mountMiddlewares.push(middleware);
         }
       }
 
       const securityInfo = getSecurityInfo(security);
       if (securityInfo) {
         const { name, config } = securityInfo;
-        const securityHandler = kisa.securityHandlers[name];
+        const securityHandler = (kisa.securityHandlers || {})[name];
         if (!securityHandler) {
-          missSecurityHandlers.push(name);
+          missSecurityHandlers.add(name);
           mountable = false;
           continue;
         }
-        apiMiddlrewares.push(securityHandler(config));
+        mountMiddlewares.push(securityHandler(config));
       }
 
       if (!mountable) continue;
 
+      const validate = createReqValiateFn(ajv, reqSchema);
       router[operation.method](
-        prefix + operation.path,
-        ...apiMiddlrewares,
+        concatPath(prefix, operation.path),
+        ...mountMiddlewares,
         async (ctx: Koa.Context) => {
-          if (kisa.handlerHook) await kisa.handlerHook(ctx, operation);
+          if (kisa.hook) await kisa.hook(ctx, operation);
           if (ctx.response.body) return;
           const { request, params, headers, query } = ctx;
           const { body } = request;
           const req = { params, headers, query, body };
-          const errors = operation.validate(req);
+          const errors = validate(req);
           if (errors) return kisa.errorHandlers.validate(errors);
           ctx.kisa = req;
           return handler(ctx);
@@ -116,17 +107,15 @@ export default function useKisa<
       );
     }
     if (
-      missMiddlewares.length +
-        missSecurityHandlers.length +
-        missHandlers.length >
+      missHandlers.length + missMiddlewares.size + missSecurityHandlers.size >
       0
     ) {
       kisa.errorHandlers.routes(
         new RoutesError(
           "routes incomplete",
           missHandlers,
-          missMiddlewares,
-          missSecurityHandlers
+          Array.from(missMiddlewares),
+          Array.from(missSecurityHandlers)
         )
       );
     }
@@ -160,4 +149,22 @@ function getSecurityInfo(security) {
   const name = Object.keys(security)[0];
   if (!name) return null;
   return { name, config: security[name] };
+}
+
+function sanitizePrefix(prefix: string) {
+  if (!prefix) {
+    return "/";
+  }
+  if (prefix[0] !== "/") prefix = "/" + prefix;
+  if (prefix.endsWith("/") && prefix.length > 0) {
+    return prefix.slice(0, -1);
+  }
+  return prefix;
+}
+
+function concatPath(prefix: string, path: string) {
+  if (path.startsWith("/")) {
+    return prefix + path.slice(1);
+  }
+  return prefix + path;
 }

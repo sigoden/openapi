@@ -1,0 +1,195 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parsed route object 1`] = `
+Object {
+  "method": "put",
+  "operationId": "updatePet",
+  "path": "/pet",
+  "reqSchema": Object {
+    "properties": Object {
+      "body": Object {
+        "properties": Object {
+          "category": Object {
+            "properties": Object {
+              "id": Object {
+                "example": 1,
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "example": "Dogs",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "id": Object {
+            "example": 10,
+            "format": "int64",
+            "type": "integer",
+          },
+          "name": Object {
+            "example": "doggie",
+            "type": "string",
+          },
+          "photoUrls": Object {
+            "items": Object {
+              "example": "<url:img>",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "status": Object {
+            "enum": Array [
+              "available",
+              "pending",
+              "sold",
+            ],
+            "example": "available",
+            "type": "string",
+          },
+          "tags": Object {
+            "items": Object {
+              "properties": Object {
+                "id": Object {
+                  "example": 1,
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "name": Object {
+                  "example": "dog",
+                  "type": "string",
+                },
+              },
+              "required": Array [
+                "id",
+                "name",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "required": Array [
+          "id",
+          "name",
+          "category",
+          "photoUrls",
+          "tags",
+          "status",
+        ],
+        "type": "object",
+      },
+    },
+    "required": Array [],
+    "type": "object",
+  },
+  "resSchema": Object {
+    "200": Object {
+      "properties": Object {
+        "category": Object {
+          "properties": Object {
+            "id": Object {
+              "example": 1,
+              "format": "int64",
+              "type": "integer",
+            },
+            "name": Object {
+              "example": "Dogs",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "id",
+            "name",
+          ],
+          "type": "object",
+        },
+        "id": Object {
+          "example": 10,
+          "format": "int64",
+          "type": "integer",
+        },
+        "name": Object {
+          "example": "doggie",
+          "type": "string",
+        },
+        "photoUrls": Object {
+          "items": Object {
+            "example": "<url:img>",
+            "type": "string",
+          },
+          "type": "array",
+        },
+        "status": Object {
+          "enum": Array [
+            "available",
+            "pending",
+            "sold",
+          ],
+          "example": "available",
+          "type": "string",
+        },
+        "tags": Object {
+          "items": Object {
+            "properties": Object {
+              "id": Object {
+                "example": 1,
+                "format": "int64",
+                "type": "integer",
+              },
+              "name": Object {
+                "example": "dog",
+                "type": "string",
+              },
+            },
+            "required": Array [
+              "id",
+              "name",
+            ],
+            "type": "object",
+          },
+          "type": "array",
+        },
+      },
+      "required": Array [
+        "id",
+        "name",
+        "category",
+        "photoUrls",
+        "tags",
+        "status",
+      ],
+      "type": "object",
+    },
+    "400": Object {
+      "description": "Invalid ID supplied",
+      "example": "",
+      "type": "string",
+    },
+    "404": Object {
+      "description": "Pet not found",
+      "example": "",
+      "type": "string",
+    },
+    "405": Object {
+      "description": "Validation exception",
+      "example": "",
+      "type": "string",
+    },
+  },
+  "security": Array [
+    Object {
+      "petstore_auth": Array [
+        "write:pets",
+        "read:pets",
+      ],
+    },
+  ],
+  "xProps": Object {},
+}
+`;

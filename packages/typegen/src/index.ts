@@ -6,7 +6,7 @@ import ejs from "ejs";
 import * as cases from "change-case";
 
 export const METHODS = ["get", "put", "delete", "post", "options"];
-export const X_MIDDLEWARE_PROP = "x-middleware";
+export const X_MIDDLEWARE_PROP = "x-middlewares";
 
 const PARAMETERS = { header: "headers", query: "query", path: "params" };
 
@@ -55,15 +55,18 @@ export function generate(spec: Spec, options: Options = {}) {
   options = lodashMerge(defaultOptions, options);
   const { operations, schemas, middlewares, securitys } = parseSpec(spec);
   const builder = new Builder(options);
+  builder.writeln("export namespace ReqTypes {");
+  builder.enterScope("object");
   for (const operationId in operations) {
-    builder.build(
-      cases.pascalCase(operationId + "Req"),
+    builder.buildInterface(
+      cases.pascalCase(operationId),
       operations[operationId]
     );
   }
   for (const name in schemas) {
-    builder.build(cases.pascalCase(name), schemas[name]);
+    builder.buildInterface(cases.pascalCase(name), schemas[name]);
   }
+  builder.exiteScope(true);
   if (options.handlers)
     builder.buildEjs(options.handlers, { list: Object.keys(operations) });
   if (options.middlewares)
@@ -169,18 +172,16 @@ class Builder {
   constructor(options: Options) {
     this.options = options;
   }
-  public build(name: string, schema) {
+  public buildInterface(name: string, schema) {
     if (schema.$ref) {
       this.writeln(
         `export type ${cases.pascalCase(name)} = ${refTail(schema.$ref)}`
       );
-      this.writeln("");
     } else if (schema.type === "object") {
       this.writeln(`export interface ${cases.pascalCase(name)} {`);
       this.enterScope("object");
       this.buildProperties(schema.properties, schema.required);
       this.exiteScope(true);
-      this.writeln("");
     }
   }
   public buildEjs(tmpl: string, data: Record<string, any>) {
@@ -218,11 +219,11 @@ class Builder {
       }
     }
   }
-  private enterScope(kind: string) {
+  public enterScope(kind: string) {
     this.scopes.push(kind);
     this.indent += 1;
   }
-  private exiteScope(root = false) {
+  public exiteScope(root = false) {
     const kind = this.scopes.pop();
     const semi = root ? "" : ";";
     this.indent -= 1;
@@ -232,10 +233,10 @@ class Builder {
       this.writeln(`}[]${semi}`);
     }
   }
-  private writeln(line) {
+  public writeln(line) {
     this.buffer += this.spaces() + line + "\n";
   }
-  private spaces() {
+  public spaces() {
     return " ".repeat(this.indent * this.options.indent);
   }
 }
