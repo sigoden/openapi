@@ -1,0 +1,32 @@
+{
+  "name": "kisa-cli",
+  "version": "0.1.0",
+  "description": "A cli for kisa",
+  "keywords": [
+    "kisa"
+  ],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/kisa-cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/openapi.git",
+    "directory": "packages/kisa-cli"
+  },
+  "license": "MIT",
+  "bin": "index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "jsona-openapi-js": "^0.3.0",
+    "typegen-openapi": "workspace:^",
+    "use-openapi": "workspace:^",
+    "yargs": "^17.2.1"
+  }
+}

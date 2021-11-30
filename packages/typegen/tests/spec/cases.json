@@ -1,0 +1,253 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sample Api",
+    "description": "Optional",
+    "version": "0.1.9"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "security": [
+    {
+      "jwt": []
+    }
+  ],
+  "paths": {
+    "/a/{b}/c/{d}": {
+      "post": {
+        "summary": "full spec",
+        "operationId": "endpoint1",
+        "parameters": [
+          {
+            "name": "b",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "a"
+            },
+            "required": true
+          },
+          {
+            "name": "d",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 3
+            },
+            "required": true
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "q"
+            },
+            "required": false
+          },
+          {
+            "name": "X-App-Key",
+            "in": "header",
+            "description": "x header",
+            "schema": {
+              "type": "string",
+              "example": "Bearer Axxx..."
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "default content-type application/json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "null": {},
+                  "bool": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "integer": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 3
+                  },
+                  "float": {
+                    "type": "number",
+                    "example": 4.3
+                  },
+                  "array1": {
+                    "type": "array",
+                    "description": "a simple array",
+                    "items": {
+                      "type": "string",
+                      "example": "3"
+                    }
+                  },
+                  "object1": {
+                    "$ref": "#/components/schemas/object1"
+                  },
+                  "objectarray": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "integer",
+                          "format": "int64",
+                          "example": 3
+                        }
+                      },
+                      "required": [
+                        "a"
+                      ]
+                    },
+                    "maxItems": 3
+                  },
+                  "time": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2018-11-13T20:20:39Z"
+                  }
+                },
+                "required": [
+                  "null",
+                  "bool",
+                  "float",
+                  "array1",
+                  "object1",
+                  "objectarray",
+                  "time"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bool": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "integer": {
+                      "type": "integer",
+                      "format": "int64",
+                      "example": 3
+                    },
+                    "float": {
+                      "type": "number",
+                      "example": 4.3
+                    },
+                    "array1": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "3"
+                      }
+                    },
+                    "object1": {
+                      "type": "object",
+                      "properties": {
+                        "a": {
+                          "type": "integer",
+                          "format": "int64",
+                          "example": 3
+                        },
+                        "b": {
+                          "type": "integer",
+                          "format": "int64",
+                          "example": 4
+                        }
+                      },
+                      "required": [
+                        "a",
+                        "b"
+                      ]
+                    },
+                    "object2": {
+                      "$ref": "#/components/schemas/object1"
+                    }
+                  },
+                  "required": [
+                    "bool",
+                    "integer",
+                    "float",
+                    "array1",
+                    "object1",
+                    "object2"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "example": "ErrNoModel"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "no model"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "object1": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "integer",
+            "format": "int64",
+            "example": 3
+          },
+          "b": {
+            "type": "integer",
+            "format": "int64",
+            "example": 4
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

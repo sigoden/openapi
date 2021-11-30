@@ -1,0 +1,40 @@
+{
+  "name": "kisa",
+  "version": "0.1.0",
+  "description": "A web framework based on koa and openapi.",
+  "keywords": [
+    "kisa"
+  ],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/kisa",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/openapi.git",
+    "directory": "packages/kisa"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "clean": "rimraf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run -s clean && npm run -s build"
+  },
+  "dependencies": {
+    "@koa/router": "^10.1.1",
+    "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.4",
+    "@types/koa__router": "^8.0.10",
+    "jsona-openapi-types": "workspace:^",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "use-openapi": "workspace:^"
+  }
+}

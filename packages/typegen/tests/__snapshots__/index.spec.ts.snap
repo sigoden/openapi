@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should works 1`] = `
+"export interface Endpoint1Req {
+  params: {
+    b: string;
+    d: number;
+  };
+  query: {
+    kind?: string;
+  };
+  headers: {
+    \\"X-App-Key\\": string;
+  };
+  body: {
+    null: any;
+    bool: boolean;
+    integer?: number;
+    float: number;
+    array1: string[];
+    object1: object1;
+    objectarray: {
+      a: number;
+    }[];
+    time: string;
+  };
+}
+
+export interface Object1 {
+  a: number;
+  b: number;
+}
+"
+`;

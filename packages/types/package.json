@@ -1,0 +1,28 @@
+{
+  "name": "jsona-openapi-types",
+  "version": "0.1.0",
+  "description": "Openapi type",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/types",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/openapi.git",
+    "directory": "packages/types"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prepublish": "npm run -s clean && npm run -s build"
+  },
+  "dependencies": {}
+}

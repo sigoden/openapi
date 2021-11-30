@@ -1,0 +1,42 @@
+{
+  "name": "use-openapi",
+  "version": "0.5.1",
+  "description": "Generate routes from openapi object",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "openapi",
+    "route",
+    "express",
+    "koa"
+  ],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/use",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/openapi.git",
+    "directory": "packages/use"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run -s clean && npm run -s build"
+  },
+  "dependencies": {
+    "ajv": "^8.8.2",
+    "ajv-formats": "^2.1.1",
+    "dag-map": "^2.0.2",
+    "jsona-openapi-types": "workspace:^",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.2",
+    "traverse": "^0.6.6"
+  }
+}

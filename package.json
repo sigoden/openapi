@@ -1,25 +1,4 @@
 {
-  "name": "kisa",
-  "version": "0.1.0",
-  "description": "",
-  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/kisa",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sigoden/kisa.git"
-  },
-  "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
     "lint": "eslint .",
     "test": "jest",
@@ -35,7 +14,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.3.1",
-    "jest-esm-transformer": "^1.0.0",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
