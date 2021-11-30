@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires  */
 import { createAjv, createReqValiateFn, parseOperations } from "../src";
 
-const petstore = require("../../deref/tests/spec/petstore.json");
-const petstoreDeref = require("../../deref/tests/spec/petstore-deref.json");
+const petstore = require("../../jsona-openapi-deref/tests/spec/petstore.json");
+const petstoreDeref = require("../../jsona-openapi-deref/tests/spec/petstore-deref.json");
 const operations = parseOperations(petstore);
 const lodashGet = require("lodash.get");
 

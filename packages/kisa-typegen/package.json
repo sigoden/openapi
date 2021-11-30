@@ -1,18 +1,18 @@
 {
-  "name": "kisa-cli",
+  "name": "kisa-typegen",
   "version": "0.1.0",
-  "description": "A cli for kisa",
+  "description": "Typegen tool for kisa",
   "keywords": [
     "kisa",
     "jsona-openapi",
-    "cli"
+    "typegen"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/kisa-cli",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/kisa-typegen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/openapi.git",
-    "directory": "packages/kisa-cli"
+    "directory": "packages/kisa-typegen"
   },
   "license": "MIT",
   "bin": "index.js",

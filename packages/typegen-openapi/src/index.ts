@@ -1,5 +1,5 @@
-import { Spec, SchemaObject } from "jsona-openapi-types";
-import deref from "jsona-openapi-deref";
+import { Spec, SchemaObject } from "../../jsona-openapi-types/dist";
+import deref from "../../jsona-openapi-deref/dist";
 import lodashMerge from "lodash.merge";
 import lodashGet from "lodash.get";
 import ejs from "ejs";

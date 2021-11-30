@@ -12,14 +12,15 @@
   },
   "keywords": [
     "kisa",
-    "jsona-openapi"
+    "jsona-openapi",
+    "typegen"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/typegen",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/typegen-openapi",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/openapi.git",
-    "directory": "packages/typegen"
+    "directory": "packages/typegen-openapi"
   },
   "license": "MIT",
   "scripts": {

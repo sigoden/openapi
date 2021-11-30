@@ -15,11 +15,11 @@
     "jsona-openapi"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/types",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/jsona-openapi-types",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/openapi.git",
-    "directory": "packages/types"
+    "directory": "packages/jsona-openapi-types"
   },
   "license": "MIT",
   "scripts": {
