@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "A web framework based on koa and openapi.",
   "keywords": [
-    "kisa"
+    "kisa",
+    "jsona-openapi",
+    "koa"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "homepage": "https://github.com/sigoden/openapi/tree/main/packages/kisa",
@@ -36,5 +38,9 @@
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
     "use-openapi": "workspace:^"
+  },
+  "devDependencies": {
+    "@types/supertest": "^2.0.11",
+    "supertest": "^6.1.6"
   }
 }

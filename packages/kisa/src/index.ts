@@ -1,5 +1,11 @@
 import Koa, { ParameterizedContext, DefaultState, Middleware } from "koa";
-import { Operation, AjvErrorObject } from "use-openapi";
+import {
+  BaseOperation,
+  mapOperations,
+  createAjv,
+  AjvErrorObject,
+  Operation,
+} from "use-openapi";
 import Router from "@koa/router";
 import type { Spec } from "jsona-openapi-types";
 
@@ -17,11 +23,11 @@ export interface KisaSecurityHandlers<S> {
 
 export type OpenApiSpec = Spec;
 
-export { Middleware as KisaMiddleware, Koa };
+export { Middleware as KisaMiddleware, Koa, Router };
 
 export interface kisaConfig<H, M, S> {
   prefix: string;
-  operations: Operation[];
+  operations: BaseOperation[];
   handlers: H;
   middlewares: M;
   securityHandlers: S;
@@ -52,8 +58,11 @@ export default function useKisa<
     const prefix = kisa.prefix.endsWith("/")
       ? kisa.prefix.slice(0, -1)
       : kisa.prefix;
+    const ajv = createAjv();
 
-    for (const operation of kisa.operations) {
+    const operations = mapOperations(kisa.operations, ajv, false);
+
+    for (const operation of operations) {
       const { method, operationId, path, security, xProps } = operation;
       let mountable = true;
       const handler = kisa.handlers[operation.operationId];

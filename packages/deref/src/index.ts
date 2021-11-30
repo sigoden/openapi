@@ -1,3 +1,4 @@
+import { Spec } from "jsona-openapi-types";
 import lodashGet from "lodash.get";
 import traverse from "traverse";
 import DAG from "dag-map";
@@ -26,7 +27,7 @@ export interface Options {
 /**
  * Derefs $ref types in a schema
  */
-function derefSchema(schema, options: Options = {}) {
+export default function derefSchema(schema: Spec, options: Options = {}) {
   const state = {
     missing: [],
     history: [],
@@ -90,8 +91,6 @@ function derefSchema(schema, options: Options = {}) {
     }
   });
 }
-
-export default derefSchema;
 
 /**
  * Add to state history

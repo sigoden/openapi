@@ -10,7 +10,10 @@
   "publishConfig": {
     "access": "public"
   },
-  "keywords": [],
+  "keywords": [
+    "kisa",
+    "jsona-openapi"
+  ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "homepage": "https://github.com/sigoden/openapi/tree/main/packages/typegen",
   "repository": {
@@ -28,6 +31,7 @@
     "change-case": "^4.1.2",
     "ejs": "^3.1.6",
     "jsona-openapi-types": "workspace:^",
+    "jsona-openapi-deref": "workspace:^",
     "lodash.get": "^4.4.2",
     "lodash.merge": "^4.6.2"
   }

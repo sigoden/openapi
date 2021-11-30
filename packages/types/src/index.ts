@@ -1,6 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
-
 export interface Spec {
   openapi: string;
   info: InfoObject;
@@ -44,7 +41,7 @@ export interface ServerVariableObject {
   description?: string;
 }
 
-export interface PathsObject<T extends {} = {}> {
+export interface PathsObject<T extends Record<string, any> = any> {
   [pattern: string]: PathItemObject<T> | undefined;
 }
 
@@ -53,17 +50,17 @@ export interface PathsObject<T extends {} = {}> {
 // You can use keys or values from it in TypeScript code like this:
 //     for (const method of Object.values(OpenAPIV3.HttpMethods)) { … }
 export enum HttpMethods {
-  GET = 'get',
-  PUT = 'put',
-  POST = 'post',
-  DELETE = 'delete',
-  OPTIONS = 'options',
-  HEAD = 'head',
-  PATCH = 'patch',
-  TRACE = 'trace',
+  GET = "get",
+  PUT = "put",
+  POST = "post",
+  DELETE = "delete",
+  OPTIONS = "options",
+  HEAD = "head",
+  PATCH = "patch",
+  TRACE = "trace",
 }
 
-export type PathItemObject<T extends {} = {}> = {
+export type PathItemObject<T extends Record<string, any> = any> = {
   $ref?: string;
   summary?: string;
   description?: string;
@@ -73,7 +70,7 @@ export type PathItemObject<T extends {} = {}> = {
   [method in HttpMethods]?: OperationObject<T>;
 };
 
-export type OperationObject<T extends {} = {}> = {
+export type OperationObject<T extends Record<string, any> = any> = {
   tags?: string[];
   summary?: string;
   description?: string;
@@ -114,12 +111,12 @@ export interface ParameterBaseObject {
   content?: { [media: string]: MediaTypeObject };
 }
 export type NonArraySchemaObjectType =
-  | 'boolean'
-  | 'object'
-  | 'number'
-  | 'string'
-  | 'integer';
-export type ArraySchemaObjectType = 'array';
+  | "boolean"
+  | "object"
+  | "number"
+  | "string"
+  | "integer";
+export type ArraySchemaObjectType = "array";
 export type SchemaObject = ArraySchemaObject | NonArraySchemaObject;
 
 export interface ArraySchemaObject extends BaseSchemaObject {
@@ -238,7 +235,7 @@ export interface LinkObject {
 }
 
 export interface CallbackObject {
-  [url: string]: PathItemObject;
+  [url: string]: PathItemObject<any>;
 }
 
 export interface SecurityRequirementObject {
@@ -264,21 +261,21 @@ export type SecuritySchemeObject =
   | OpenIdSecurityScheme;
 
 export interface HttpSecurityScheme {
-  type: 'http';
+  type: "http";
   description?: string;
   scheme: string;
   bearerFormat?: string;
 }
 
 export interface ApiKeySecurityScheme {
-  type: 'apiKey';
+  type: "apiKey";
   description?: string;
   name: string;
   in: string;
 }
 
 export interface OAuth2SecurityScheme {
-  type: 'oauth2';
+  type: "oauth2";
   flows: {
     implicit?: {
       authorizationUrl: string;
@@ -305,7 +302,7 @@ export interface OAuth2SecurityScheme {
 }
 
 export interface OpenIdSecurityScheme {
-  type: 'openIdConnect';
+  type: "openIdConnect";
   description?: string;
   openIdConnectUrl: string;
 }

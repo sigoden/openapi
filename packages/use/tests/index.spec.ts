@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires  */
 import { getOperations } from "../src";
 
-const petstore = require("./spec/petstore.json");
+const petstore = require("../../deref/tests/spec/petstore.json");
 const routes = getOperations(petstore);
 
 test("parsed route object", () => {

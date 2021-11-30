@@ -1,4 +1,5 @@
 import { Spec, SchemaObject } from "jsona-openapi-types";
+import deref from "jsona-openapi-deref";
 import lodashMerge from "lodash.merge";
 import lodashGet from "lodash.get";
 import ejs from "ejs";
@@ -84,6 +85,7 @@ export interface ParseSpecResult {
 }
 
 export function parseSpec(spec: Spec): ParseSpecResult {
+  deref(spec);
   const operations = {} as SchemaRecord;
   const middlewares = new Set<string>();
   const securitys = new Set<string>();

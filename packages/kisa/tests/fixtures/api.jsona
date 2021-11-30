@@ -1,0 +1,108 @@
+{
+  @openapi({
+    servers: [
+      {
+        url: "http://localhost:3000",
+      }
+    ],
+    security: [
+      { jwt: [] }
+    ]
+  })
+  login: { @endpoint({summary:"user login",security:[]})
+    route: 'POST /login',
+    req: {
+      body: {
+        name: 'admin',
+        pass: 'a123456'
+      }
+    },
+    res: {
+      200: {
+        id: 1,
+        name: 'user1',
+        token: '<token>',
+        expireAt: '<timestamp>'
+      }
+    }
+  },
+  createPost: { @endpoint({summary:"create post"})
+    route: 'POST /posts',
+    "x-middlewares": ["ratelimit"],
+    req: {
+      body: {
+        title: 'How to write blog?',
+        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry', @optional
+        content: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever`,
+      }
+    },
+    res: {
+      200: { @save("Post")
+        id: 1,
+        userId: 1,
+        title: 'How to write blog?',
+        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
+        status: 0,
+        content: `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever`,
+        createdAt: "<datetime>",
+        updateAt: "<datetime>",
+      }
+    },
+  },
+  publishPost: { @endpoint({summary:"publish post"})
+    route: "PUT /posts/{}/publish",
+    req: {
+      params: {
+        id: 1
+      }
+    },
+    res: {
+      200: {
+        msg: "OK",
+      }
+    },
+  },
+  listMyPosts: { @endpoint({summary:"list my posts"})
+    route: "GET /posts/my",
+    req: {
+      query: {
+        pageSize: 0, @optional
+        pageNum: 10, @optional
+      }
+    },
+    res: {
+      200: [
+        { @use("Post")
+        }
+      ]
+    }
+  },
+  listPosts: { @endpoint({summary:"list posts",security:[]})
+    route: "GET /posts",
+    req: {
+      query: {
+        pageSize: 0, @optional
+        pageNum: 10, @optional
+      }
+    },
+    res: {
+      200: [
+        { @use("Post")
+        }
+      ]
+    }
+  },
+  deletePost: { @endpoint({summary:"delete post"})
+    route: "DELETE /posts/{}",
+    req: {
+      params: {
+        id: 1
+      }
+    },
+    res: {
+      200: {
+        msg: "OK"
+      }
+    }
+  }
+}

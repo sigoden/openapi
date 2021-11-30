@@ -1,13 +1,15 @@
 #!usr/bin/env node
+
 const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
 const { parse } = require("jsona-openapi-js");
+const { parseOperations } = require("use-openapi");
 const { generate } = require("typegen-openapi");
 
-const argv = require("yargs/yargs")(process.argv.slice(2))
+const yargs = require("yargs")
   .help()
-  .usage("$0 <input> <output>", "Generate type file for kisa")
+  .usage("$0 <input> [output]", "Generate type file for kisa")
   .positional("input", {
     type: "string",
     describe: "openapi json/yaml/jsona file",
@@ -15,10 +17,10 @@ const argv = require("yargs/yargs")(process.argv.slice(2))
   .positional("output", {
     type: "string",
     description: "output d.ts file",
-  }).argv;
+  });
 
 function load(file) {
-  const ext = path.extname(argv.input);
+  const ext = path.extname(file);
   const content = fs.readFileSync(file, "utf8");
   if (ext === ".json") {
     return JSON.parse(ext);
@@ -40,7 +42,6 @@ import {
   KisaMiddlewares,
   KisaMiddleware,
   KisaSecurityHandlers,
-  OpenApiSpec,
 } from "kisa";
 
 `;
@@ -57,10 +58,24 @@ import {
   return content;
 }
 
-function main() {
+function run(argv) {
   const spec = load(argv.input);
-  const content = render(spec);
-  fs.writeFileSync(argv.output, content);
+  let content = render(spec);
+  const operations = parseOperations(spec);
+  content += `
+
+export const OPERATIONS = \`${JSON.stringify(operations)}\`;
+`;
+  if (argv.output) {
+    fs.writeFileSync(argv.output, content);
+  } else {
+    console.log(content);
+  }
 }
 
-main();
+if (require.main === module) {
+  const argv = yargs.parse(process.argv.slice(2));
+  run(argv);
+} else {
+  module.exports = { yargs, run };
+}

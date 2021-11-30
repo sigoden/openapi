@@ -2,7 +2,8 @@ import Ajv, { Options as AjvOptions, ErrorObject as AjvErrorObject } from "ajv";
 import lodashMerge from "lodash.merge";
 import lodashGet from "lodash.get";
 import addFormats from "ajv-formats";
-import derefSchema from "./derefSchema";
+import { SchemaObject } from "jsona-openapi-types";
+import deref from "jsona-openapi-deref";
 import {
   Spec,
   OperationObject,
@@ -13,41 +14,37 @@ import {
 const METHODS = ["get", "put", "delete", "post", "options"];
 const PARAMETER_MAP = { header: "headers", query: "query", path: "params" };
 
-function getOperations(spec: Spec, options: Options = {}): Operation[] {
-  const defaultOptions: Options = {
-    ajvOptions: {
-      useDefaults: true,
-      coerceTypes: true,
-      keywords: ["example"],
-    },
-    createResValidate: false,
-  };
-  options = lodashMerge(defaultOptions, options);
-  derefSchema(spec);
-  const ajv = options.ajv ? options.ajv : createAjv(options.ajvOptions);
-  const operations: Operation[] = [];
+export const AJV_OPTIONS: AjvOptions = {
+  useDefaults: true,
+  coerceTypes: true,
+  keywords: ["example"],
+};
+
+export function parseOperations(spec: Spec): BaseOperation[] {
+  deref(spec);
+  const invalidOperations: InvalidOperation[] = [];
+  const operations: BaseOperation[] = [];
   for (const [path, pathItem] of Object.entries(spec.paths)) {
     for (const method of METHODS) {
       const operation = pathItem[method] as OperationObject;
       if (!operation) continue;
+      if (!operation.operationId) {
+        invalidOperations.push({ method, path, reason: "MissOperationId" });
+        continue;
+      }
       const xProps = Object.keys(operation)
         .filter((key) => key.startsWith("x-") || key.startsWith("x"))
         .reduce((a, c) => {
           a[c] = operation[c];
           return a;
         }, {});
-      if (!operation.operationId) {
-        throw new Error(
-          `endpoint ${method.toUpperCase()} ${path} miss operationId`
-        );
-      }
-      const endpointSchema = createDefaultSchema();
+      const reqSchema = createDefaultSchema();
       const addParamaterSchema = (key, obj: ParameterObject) => {
         const dataKey = PARAMETER_MAP[key];
         if (!dataKey) return;
-        let data = endpointSchema.properties[dataKey];
+        let data = reqSchema.properties[dataKey];
         if (!data) {
-          data = endpointSchema.properties[dataKey] = createDefaultSchema();
+          data = reqSchema.properties[dataKey] = createDefaultSchema();
         }
         data.properties[obj.name] = obj.schema;
         if (obj.required) data.required.push(obj.name);
@@ -66,26 +63,21 @@ function getOperations(spec: Spec, options: Options = {}): Operation[] {
         "schema",
       ]);
       if (bodySchema) {
-        endpointSchema.properties["body"] = bodySchema;
+        reqSchema.properties["body"] = bodySchema;
       }
 
-      const validate = ajv.compile(endpointSchema);
-      let validateRes: ValidateResFn = null;
-      if (options.createResValidate) {
-        const validateStatusBody = {};
-        const responses = lodashGet(options, ["responses"], {});
-        for (const status in responses) {
-          const schema = lodashGet(responses, [
-            status,
-            "content",
-            "application/json",
-          ]);
-          if (schema) validateStatusBody[status] = ajv.compile(schema);
-        }
-        validateRes = (status, body) => {
-          const validate = validateStatusBody[status];
-          if (validate) return validate(body);
-        };
+      const resSchema = {} as SchemaObjectRecord;
+      const responses = lodashGet(operation, ["responses"], {});
+      for (const status in responses) {
+        const statusSchema = lodashGet(responses, [
+          status,
+          "content",
+          "application/json",
+        ]);
+        if (statusSchema) resSchema[status] = statusSchema;
+      }
+      if (invalidOperations.length > 0) {
+        throw new InvalidSpecError(invalidOperations);
       }
 
       operations.push({
@@ -94,22 +86,80 @@ function getOperations(spec: Spec, options: Options = {}): Operation[] {
         security: operation.security || spec.security,
         operationId: operation.operationId,
         xProps,
-        validate: (data) => {
-          validate(data);
-          return validate.errors;
-        },
-        validateRes,
+        reqSchema: reqSchema as SchemaObject,
+        resSchema,
       });
     }
   }
   return operations;
 }
 
+export function getOperations(spec: Spec, options: Options = {}): Operation[] {
+  const defaultOptions: Options = {
+    ajvOptions: { ...AJV_OPTIONS },
+    createResValidate: false,
+  };
+  options = lodashMerge(defaultOptions, options);
+  const operations = parseOperations(spec);
+  const ajv = options.ajv ? options.ajv : createAjv(options.ajvOptions);
+  return mapOperations(operations, ajv, options.createResValidate);
+}
+
+export function mapOperations(
+  operations: BaseOperation[],
+  ajv: Ajv,
+  createResValidate = false
+): Operation[] {
+  return operations.map((operation) => {
+    const { reqSchema, resSchema } = operation;
+    const ajvValidate = ajv.compile(reqSchema);
+    const validate: ValidateFn = (data) => {
+      ajvValidate(data);
+      return ajvValidate.errors;
+    };
+    let validateRes: ValidateResFn;
+    if (createResValidate) {
+      const ajvValidates = Object.keys(resSchema).reduce((acc, status) => {
+        acc[status] = ajv.compile(resSchema[status]);
+        return acc;
+      }, {});
+      validateRes = (status, body) => {
+        const validate = ajvValidates[status];
+        if (validate) {
+          validate(body);
+          return validate.errors;
+        }
+      };
+    }
+    return {
+      ...operation,
+      validate,
+      validateRes,
+    };
+  });
+}
+
+export interface InvalidOperation {
+  method: string;
+  path: string;
+  reason: "MissOperationId";
+}
+
+export class InvalidSpecError extends Error {
+  public invalidOperations: InvalidOperation[];
+  public constructor(operations: InvalidOperation[], message = "Invalid spec") {
+    super(message);
+    this.invalidOperations = operations;
+    this.name = "MissOperationIdsError";
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
 function createDefaultSchema() {
   return { type: "object", properties: {}, required: [] };
 }
 
-function createAjv(options: AjvOptions): Ajv {
+export function createAjv(options: AjvOptions = AJV_OPTIONS): Ajv {
   const ajv = new Ajv(options);
   addFormats(ajv);
   return ajv;
@@ -139,12 +189,21 @@ export enum Method {
   Patch = "patch",
 }
 
-export interface Operation {
+export interface BaseOperation {
   path: string;
   method: string;
   operationId: string;
   security: SecurityRequirementObject[];
   xProps: { [k: string]: any };
+  reqSchema: SchemaObject;
+  resSchema: SchemaObjectRecord;
+}
+
+export interface SchemaObjectRecord {
+  [k: string]: SchemaObject;
+}
+
+export interface Operation extends BaseOperation {
   validate: ValidateFn;
   validateRes?: ValidateResFn;
 }
@@ -160,5 +219,3 @@ export interface ValidateData {
 }
 
 export type { AjvErrorObject, AjvOptions };
-
-export { getOperations };
