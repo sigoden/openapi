@@ -45,13 +45,30 @@ export interface Config<H, S, M> {
   middlewares?: M;
   hook?: (ctx: Context<S>, operation: Operation) => Promise<void>;
   operations?: Operation[];
-  errorHandlers?: {
-    mount: (error: MountError) => void;
-    validate: (ctx: Context<S>, errors: AjvErrorObject[]) => void;
-  };
+  errorHandlers?: ErrorHandlers;
 }
 
+export interface ErrorHandlers {
+  mount?: (error: MountError) => void;
+  validate?: (ctx: Context, errors: AjvErrorObject[]) => void;
+}
+
+export type HandleMountError = ErrorHandlers["mount"];
+
+export type HandleValidateError = ErrorHandlers["validate"];
+
+export const errorHandlers: ErrorHandlers = {
+  mount: (error) => {
+    console.log(error.dump());
+  },
+  validate: (ctx, errors) => {
+    ctx.status = 401;
+    ctx.body = `validate throws ${JSON.stringify(errors)}`;
+  },
+};
+
 export type MountKisa<T> = (router: Router<T>) => void;
+
 export type UseKisaResult<T, H, S, M> = [Config<H, S, M>, MountKisa<T>];
 
 export default function useKisa<
@@ -59,28 +76,20 @@ export default function useKisa<
   H extends Handlers<T>,
   S extends SecurityHandlers<T> = SecurityHandlers<State>,
   M extends Middlewares<T> = Middlewares<State>
->(
-  kisa: Config<H, S, M> = {
+>(kisa: Config<H, S, M>): UseKisaResult<T, H, S, M> {
+  kisa = {
     prefix: "/",
     handlers: {} as H,
     middlewares: {} as M,
     securityHandlers: {} as S,
-    errorHandlers: {
-      mount: (error) => {
-        console.log(error);
-      },
-      validate: (ctx, errors) => {
-        ctx.status = 401;
-        ctx.body = `validate throws ${JSON.stringify(errors)}`;
-      },
-    },
-  }
-): UseKisaResult<T, H, S, M> {
+    errorHandlers: {},
+    ...(kisa || {}),
+  };
+  kisa.errorHandlers = { ...errorHandlers, ...kisa.errorHandlers };
   const mountKisa: MountKisa<T> = (router) => {
     const missHandlers: MissHandlerInfo[] = [];
     const missMiddlewares = new Set<string>();
     const missSecurityHandlers = new Set<string>();
-    const prefix = sanitizePrefix(kisa.prefix);
     const ajv = createAjv();
 
     for (const operation of kisa.operations) {
@@ -123,7 +132,7 @@ export default function useKisa<
 
       const validate = createReqValiateFn(ajv, reqSchema);
       router[operation.method](
-        concatPath(prefix, operation.path),
+        concatPath(kisa.prefix, operation.path),
         ...mountMiddlewares,
         async (ctx: Context) => {
           if (kisa.hook) await kisa.hook(ctx, operation);
@@ -144,7 +153,7 @@ export default function useKisa<
     ) {
       kisa.errorHandlers.mount(
         new MountError(
-          prefix,
+          kisa.prefix,
           missHandlers,
           Array.from(missSecurityHandlers),
           Array.from(missMiddlewares)
@@ -216,20 +225,15 @@ function getSecurityInfo(security) {
   return { name, config: security[name] };
 }
 
-function sanitizePrefix(prefix: string) {
-  if (!prefix) {
-    return "/";
+function concatPath(prefix: string, subPath: string) {
+  let url: string;
+  if (prefix.endsWith("/") && subPath.startsWith("/")) {
+    url = prefix + subPath.slice(1);
+  } else if (!prefix.endsWith("/") && !subPath.startsWith("/")) {
+    url = prefix + "/" + subPath;
+  } else {
+    url + prefix + subPath;
   }
-  if (prefix[0] !== "/") prefix = "/" + prefix;
-  if (prefix.endsWith("/") && prefix.length > 0) {
-    return prefix.slice(0, -1);
-  }
-  return prefix;
-}
-
-function concatPath(prefix: string, path: string) {
-  if (path.startsWith("/")) {
-    return prefix + path.slice(1);
-  }
-  return prefix + path;
+  if (!url.startsWith("/")) url = "/" + url;
+  return url;
 }
