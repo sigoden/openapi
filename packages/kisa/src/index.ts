@@ -1,4 +1,6 @@
-import Koa, { ParameterizedContext, DefaultState, Middleware, Next } from "koa";
+import { default as App } from "koa";
+import * as Koa from "koa";
+
 import {
   createAjv,
   AjvErrorObject,
@@ -7,47 +9,58 @@ import {
 } from "use-openapi";
 import Router from "@koa/router";
 
-export interface KisaHandlers<S> {
-  [k: string]: (ctx: ParameterizedContext<S>, next?: Next) => Promise<void>;
+export type State = any;
+
+export type Context<S = State> = Koa.ParameterizedContext<S> & {
+  request: { body: any };
+};
+
+export type Next = Koa.Next;
+
+export type Middleware<S = State> = Koa.Middleware<S, Context<S>>;
+
+export type Handler<S, T> = (
+  ctx: Context<S> & { kisa: T },
+  next?: Next
+) => Promise<void>;
+
+export interface Handlers<S> {
+  [k: string]: Handler<S, any>;
 }
 
-export interface KisaMiddlewares<S> {
+export interface Middlewares<S> {
   [k: string]: Middleware<S>;
 }
 
-export interface KisaSecurityHandlers<S> {
+export interface SecurityHandlers<S> {
   [k: string]: (config: string[]) => Middleware<S>;
 }
 
-export { Middleware as KisaMiddleware, Koa, Router, Operation };
+export { App, Router, Operation };
 
-export interface kisaConfig<H, M, S> {
+export interface Config<H, S, M> {
   prefix?: string;
   handlers?: H;
-  middlewares?: M;
   securityHandlers?: S;
-  hook?: (ctx: ParameterizedContext<S>, operation: Operation) => Promise<void>;
+  middlewares?: M;
+  hook?: (ctx: Context<S>, operation: Operation) => Promise<void>;
   operations?: Operation[];
   errorHandlers?: {
     mount: (error: MountError) => void;
-    validate: (ctx: ParameterizedContext<S>, errors: AjvErrorObject[]) => void;
+    validate: (ctx: Context<S>, errors: AjvErrorObject[]) => void;
   };
 }
 
-export type KisaHandler<D, T> = (
-  ctx: ParameterizedContext<D> & { kisa: T }
-) => Promise<void>;
-
 export type MountKisa<T> = (router: Router<T>) => void;
-export type UseKisaResult<T, H, M, S> = [kisaConfig<H, M, S>, MountKisa<T>];
+export type UseKisaResult<T, H, S, M> = [Config<H, S, M>, MountKisa<T>];
 
 export default function useKisa<
-  T extends DefaultState,
-  H extends KisaHandlers<T>,
-  M extends KisaMiddlewares<T>,
-  S extends KisaSecurityHandlers<T>
+  T extends State,
+  H extends Handlers<T>,
+  S extends SecurityHandlers<T> = SecurityHandlers<State>,
+  M extends Middlewares<T> = Middlewares<State>
 >(
-  kisa: kisaConfig<H, M, S> = {
+  kisa: Config<H, S, M> = {
     prefix: "/",
     handlers: {} as H,
     middlewares: {} as M,
@@ -62,7 +75,7 @@ export default function useKisa<
       },
     },
   }
-): UseKisaResult<T, H, M, S> {
+): UseKisaResult<T, H, S, M> {
   const mountKisa: MountKisa<T> = (router) => {
     const missHandlers: MissHandlerInfo[] = [];
     const missMiddlewares = new Set<string>();
@@ -112,7 +125,7 @@ export default function useKisa<
       router[operation.method](
         concatPath(prefix, operation.path),
         ...mountMiddlewares,
-        async (ctx: Koa.Context) => {
+        async (ctx: Context) => {
           if (kisa.hook) await kisa.hook(ctx, operation);
           if (ctx.response.body) return;
           const { request, params, headers, query } = ctx;
@@ -133,8 +146,8 @@ export default function useKisa<
         new MountError(
           prefix,
           missHandlers,
-          Array.from(missMiddlewares),
-          Array.from(missSecurityHandlers)
+          Array.from(missSecurityHandlers),
+          Array.from(missMiddlewares)
         )
       );
     }
@@ -151,13 +164,13 @@ interface MissHandlerInfo {
 export class MountError extends Error {
   public prefix: string;
   public missHandlers: MissHandlerInfo[];
-  public missMiddlewares: string[];
   public missSecurityHandlers: string[];
+  public missMiddlewares: string[];
   public constructor(
     prefix: string,
     missHandlers: MissHandlerInfo[],
-    missMiddlewares: string[],
-    missSecurityHandlers: string[]
+    missSecurityHandlers: string[],
+    missMiddlewares: string[]
   ) {
     super(`mount ${prefix} incompletely`);
     this.name = "MountError";
@@ -178,15 +191,15 @@ export class MountError extends Error {
         })\n`;
       }
     }
-    if (missMiddlewares.length > 0) {
-      message += indent(1) + "miss middlewares:\n";
-      for (const name of missMiddlewares) {
-        message += `${indent(2)}${name}\n`;
-      }
-    }
     if (missSecurityHandlers.length > 0) {
       message += indent(1) + "miss security handlers:\n";
       for (const name of missSecurityHandlers) {
+        message += `${indent(2)}${name}\n`;
+      }
+    }
+    if (missMiddlewares.length > 0) {
+      message += indent(1) + "miss middlewares:\n";
+      for (const name of missMiddlewares) {
         message += `${indent(2)}${name}\n`;
       }
     }

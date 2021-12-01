@@ -9,9 +9,9 @@ exports[`routes err 1`] = `
     publishPost(put /posts/:id/publish)
     listMyPosts(get /posts/my)
     deletePost(delete /posts/:id)
-  miss middlewares:
-    ratelimit
   miss security handlers:
     jwt
+  miss middlewares:
+    ratelimit
 "
 `;

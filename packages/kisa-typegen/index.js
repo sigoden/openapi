@@ -43,25 +43,25 @@ function render(spec) {
 /* eslint-disable */
 
 import {
-  KisaHandler,
-  KisaHandlers,
-  KisaMiddlewares,
-  KisaMiddleware,
-  KisaSecurityHandlers,
+  Handler,
+  Middleware,
   Operation,
+  Handlers as KisaHandlers,
+  Middlewares as KisaMiddlewares,
+  SecurityHandlers as KisaSecurityHandlers,
 } from "kisa";
 
 `;
 
   content += generate(spec, {
     handlers: `export interface Handlers<S> extends KisaHandlers<S> {<% list.forEach(function(name) { %>
-  <%= name %>: KisaHandler<S, ReqTypes.<%= cases.pascalCase(name) %>>; <% });%>
+  <%= name %>: Handler<S, ReqTypes.<%= cases.pascalCase(name) %>>; <% });%>
 }`,
     middlewares: `export interface Middlewares<S> extends KisaMiddlewares<S> {<% list.forEach(function(name) { %>
-  <%= name %>: KisaMiddleware<S>; <% });%>
+  <%= name %>: Middleware<S>; <% });%>
 }`,
     securityHandlers: `export interface SecurityHandlers<S> extends KisaSecurityHandlers<S> {<% list.forEach(function(name) { %>
-  <%= name %>: (config: string[]) => KisaMiddleware<S>; <% });%>
+  <%= name %>: (config: string[]) => Middleware<S>; <% });%>
 }`,
   });
 

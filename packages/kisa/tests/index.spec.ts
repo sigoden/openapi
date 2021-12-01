@@ -1,7 +1,7 @@
 import bodyParser from "koa-bodyparser";
 import request from "supertest";
 import http from "http";
-import useKisa, { Koa, Router, MountError } from "../src";
+import useKisa, { App, Router, MountError } from "../src";
 import * as Api from "./fixtures/api";
 
 interface State {
@@ -17,7 +17,7 @@ describe("it should works", () => {
   const spyValidateErr = jest.fn();
   const spyJwt = jest.fn();
   beforeAll(() => {
-    const app = new Koa();
+    const app = new App();
     app.use(bodyParser());
     const router = new Router();
     const generic = async (ctx) => {
@@ -26,8 +26,8 @@ describe("it should works", () => {
     const [, mountKisa] = useKisa<
       State,
       Api.Handlers<State>,
-      Api.Middlewares<State>,
-      Api.SecurityHandlers<State>
+      Api.SecurityHandlers<State>,
+      Api.Middlewares<State>
     >({
       operations: Api.OPERATIONS,
       handlers: {
@@ -185,14 +185,14 @@ describe("it should works", () => {
 
 test("routes err", () => {
   const spyMountErr = jest.fn();
-  const app = new Koa();
+  const app = new App();
   app.use(bodyParser());
   const router = new Router();
   const [, mountKisa] = useKisa<
     State,
     Api.Handlers<State>,
-    Api.Middlewares<State>,
-    Api.SecurityHandlers<State>
+    Api.SecurityHandlers<State>,
+    Api.Middlewares<State>
   >({
     operations: Api.OPERATIONS,
     errorHandlers: {
