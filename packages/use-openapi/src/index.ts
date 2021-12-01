@@ -83,7 +83,7 @@ export function parseOperations(spec: Spec): Operation[] {
       operations.push({
         path: path.replace(/{([^}]+)}/g, ":$1").replace(/\/$/, ""),
         method,
-        security: operation.security || spec.security,
+        security: operation.security || spec.security || [],
         operationId: operation.operationId,
         xProps,
         reqSchema: reqSchema as SchemaObject,
