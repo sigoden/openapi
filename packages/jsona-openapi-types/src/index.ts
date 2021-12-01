@@ -121,7 +121,7 @@ export type SchemaObject = ArraySchemaObject | NonArraySchemaObject;
 
 export interface ArraySchemaObject extends BaseSchemaObject {
   type: ArraySchemaObjectType;
-  items: ReferenceObject | SchemaObject;
+  items?: ReferenceObject | SchemaObject;
 }
 
 export interface NonArraySchemaObject extends BaseSchemaObject {
