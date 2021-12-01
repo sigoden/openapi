@@ -30,7 +30,7 @@ export interface kisaConfig<H, M, S> {
   operations?: Operation[];
   errorHandlers?: {
     mount: (error: MountError) => void;
-    validate: (errors: AjvErrorObject[]) => void;
+    validate: (ctx: ParameterizedContext<S>, errors: AjvErrorObject[]) => void;
   };
 }
 
@@ -46,7 +46,23 @@ export default function useKisa<
   H extends KisaHandlers<T>,
   M extends KisaMiddlewares<T>,
   S extends KisaSecurityHandlers<T>
->(kisa: kisaConfig<H, M, S> = {}): UseKisaResult<T, H, M, S> {
+>(
+  kisa: kisaConfig<H, M, S> = {
+    prefix: "/",
+    handlers: {} as H,
+    middlewares: {} as M,
+    securityHandlers: {} as S,
+    errorHandlers: {
+      mount: (error) => {
+        console.log(error);
+      },
+      validate: (ctx, errors) => {
+        ctx.status = 401;
+        ctx.body = `validate throws ${JSON.stringify(errors)}`;
+      },
+    },
+  }
+): UseKisaResult<T, H, M, S> {
   const mountKisa: MountKisa<T> = (router) => {
     const missHandlers: MissHandlerInfo[] = [];
     const missMiddlewares = new Set<string>();
@@ -103,7 +119,7 @@ export default function useKisa<
           const { body } = request;
           const req = { params, headers, query, body };
           const errors = validate(req);
-          if (errors) return kisa.errorHandlers.validate(errors);
+          if (errors) return kisa.errorHandlers.validate(ctx, errors);
           ctx.kisa = req;
           return handler(ctx);
         }

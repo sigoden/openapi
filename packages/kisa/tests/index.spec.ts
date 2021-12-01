@@ -61,7 +61,7 @@ describe("it should works", () => {
         mount: (error) => {
           spyMountErr(error);
         },
-        validate: (errors) => {
+        validate: (ctx, errors) => {
           spyValidateErr(errors);
         },
       },
