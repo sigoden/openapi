@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`routes err 1`] = `
+"mount / incompletely
+  miss handlers:
+    login(post /login)
+    listPosts(get /posts)
+    createPost(post /posts)
+    publishPost(put /posts/:id/publish)
+    listMyPosts(get /posts/my)
+    deletePost(delete /posts/:id)
+  miss middlewares:
+    ratelimit
+  miss security handlers:
+    jwt
+"
+`;

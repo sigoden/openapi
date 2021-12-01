@@ -23,13 +23,13 @@ export { Middleware as KisaMiddleware, Koa, Router, Operation };
 
 export interface kisaConfig<H, M, S> {
   prefix?: string;
-  handlers: H;
+  handlers?: H;
   middlewares?: M;
   securityHandlers?: S;
   hook?: (ctx: ParameterizedContext<S>, operation: Operation) => Promise<void>;
-  operations: Operation[];
-  errorHandlers: {
-    routes: (error: RoutesError) => void;
+  operations?: Operation[];
+  errorHandlers?: {
+    mount: (error: MountError) => void;
     validate: (errors: AjvErrorObject[]) => void;
   };
 }
@@ -38,14 +38,17 @@ export type KisaHandler<D, T> = (
   ctx: ParameterizedContext<D> & { kisa: T }
 ) => Promise<void>;
 
+export type MountKisa<T> = (router: Router<T>) => void;
+export type UseKisaResult<T, H, M, S> = [kisaConfig<H, M, S>, MountKisa<T>];
+
 export default function useKisa<
   T extends DefaultState,
   H extends KisaHandlers<T>,
   M extends KisaMiddlewares<T>,
   S extends KisaSecurityHandlers<T>
->(kisa: Partial<kisaConfig<H, M, S>> = {}) {
-  const mountKisa = async (router: Router) => {
-    const missHandlers = [];
+>(kisa: kisaConfig<H, M, S> = {}): UseKisaResult<T, H, M, S> {
+  const mountKisa: MountKisa<T> = (router) => {
+    const missHandlers: MissHandlerInfo[] = [];
     const missMiddlewares = new Set<string>();
     const missSecurityHandlers = new Set<string>();
     const prefix = sanitizePrefix(kisa.prefix);
@@ -110,9 +113,9 @@ export default function useKisa<
       missHandlers.length + missMiddlewares.size + missSecurityHandlers.size >
       0
     ) {
-      kisa.errorHandlers.routes(
-        new RoutesError(
-          "routes incomplete",
+      kisa.errorHandlers.mount(
+        new MountError(
+          prefix,
           missHandlers,
           Array.from(missMiddlewares),
           Array.from(missSecurityHandlers)
@@ -120,25 +123,58 @@ export default function useKisa<
       );
     }
   };
-  return { kisa, mountKisa };
+  return [kisa, mountKisa];
 }
 
-export class RoutesError extends Error {
-  public missHandlers: string[];
+interface MissHandlerInfo {
+  path: string;
+  method: string;
+  operationId: string;
+}
+
+export class MountError extends Error {
+  public prefix: string;
+  public missHandlers: MissHandlerInfo[];
   public missMiddlewares: string[];
   public missSecurityHandlers: string[];
   public constructor(
-    message: string,
-    missHandlers: string[],
+    prefix: string,
+    missHandlers: MissHandlerInfo[],
     missMiddlewares: string[],
     missSecurityHandlers: string[]
   ) {
-    super(message);
-    this.name = "RouterError";
+    super(`mount ${prefix} incompletely`);
+    this.name = "MountError";
     this.missHandlers = missHandlers;
     this.missMiddlewares = missMiddlewares;
     this.missSecurityHandlers = missSecurityHandlers;
     Error.captureStackTrace(this, this.constructor);
+  }
+  public dump() {
+    let message = `${this.message}\n`;
+    const indent = (level) => "  ".repeat(level);
+    const { missMiddlewares, missSecurityHandlers, missHandlers } = this;
+    if (missHandlers.length > 0) {
+      message += indent(1) + "miss handlers:\n";
+      for (const api of missHandlers) {
+        message += `${indent(2)}${api.operationId}(${api.method} ${
+          api.path
+        })\n`;
+      }
+    }
+    if (missMiddlewares.length > 0) {
+      message += indent(1) + "miss middlewares:\n";
+      for (const name of missMiddlewares) {
+        message += `${indent(2)}${name}\n`;
+      }
+    }
+    if (missSecurityHandlers.length > 0) {
+      message += indent(1) + "miss security handlers:\n";
+      for (const name of missSecurityHandlers) {
+        message += `${indent(2)}${name}\n`;
+      }
+    }
+    return message;
   }
 }
 

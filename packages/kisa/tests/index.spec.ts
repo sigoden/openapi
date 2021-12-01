@@ -1,7 +1,7 @@
 import bodyParser from "koa-bodyparser";
 import request from "supertest";
 import http from "http";
-import useKisa, { Koa, Router, RoutesError } from "../src";
+import useKisa, { Koa, Router, MountError } from "../src";
 import * as Api from "./fixtures/api";
 
 interface State {
@@ -13,7 +13,7 @@ interface State {
 describe("it should works", () => {
   let server: http.Server;
   const spyRatelimit = jest.fn();
-  const spyRoutesErr = jest.fn();
+  const spyMountErr = jest.fn();
   const spyValidateErr = jest.fn();
   const spyJwt = jest.fn();
   beforeAll(() => {
@@ -23,7 +23,7 @@ describe("it should works", () => {
     const generic = async (ctx) => {
       ctx.body = { kisa: ctx.kisa };
     };
-    const { mountKisa } = useKisa<
+    const [, mountKisa] = useKisa<
       State,
       Api.Handlers<State>,
       Api.Middlewares<State>,
@@ -58,8 +58,8 @@ describe("it should works", () => {
         },
       },
       errorHandlers: {
-        routes: (error) => {
-          spyRoutesErr(error);
+        mount: (error) => {
+          spyMountErr(error);
         },
         validate: (errors) => {
           spyValidateErr(errors);
@@ -76,7 +76,7 @@ describe("it should works", () => {
     spyJwt.mockClear();
   });
   it("routes", () => {
-    expect(spyRoutesErr.mock.calls).toEqual([]);
+    expect(spyMountErr.mock.calls).toEqual([]);
   });
   it("login", (done) => {
     const data = { name: "admin", pass: "a123456" };
@@ -184,11 +184,11 @@ describe("it should works", () => {
 });
 
 test("routes err", () => {
-  const spyRoutesErr = jest.fn();
+  const spyMountErr = jest.fn();
   const app = new Koa();
   app.use(bodyParser());
   const router = new Router();
-  const { mountKisa } = useKisa<
+  const [, mountKisa] = useKisa<
     State,
     Api.Handlers<State>,
     Api.Middlewares<State>,
@@ -196,8 +196,8 @@ test("routes err", () => {
   >({
     operations: Api.OPERATIONS,
     errorHandlers: {
-      routes: (error) => {
-        spyRoutesErr(error);
+      mount: (error) => {
+        spyMountErr(error);
       },
       validate: (errors) => {
         return;
@@ -206,8 +206,8 @@ test("routes err", () => {
   });
   mountKisa(router);
   app.use(router.routes());
-  const err = spyRoutesErr.mock.calls[0][0];
-  expect(err).toBeInstanceOf(RoutesError);
+  const err = spyMountErr.mock.calls[0][0];
+  expect(err).toBeInstanceOf(MountError);
   expect(err.missHandlers).toEqual([
     { method: "post", operationId: "login", path: "/login" },
     { method: "get", operationId: "listPosts", path: "/posts" },
@@ -218,4 +218,5 @@ test("routes err", () => {
   ]);
   expect(err.missMiddlewares).toEqual(["ratelimit"]);
   expect(err.missSecurityHandlers).toEqual(["jwt"]);
+  expect(err.dump()).toMatchSnapshot();
 });
