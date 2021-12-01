@@ -1,0 +1,9 @@
+ CREATE TABLE `User` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(99) NOT NULL,
+    `pass` VARCHAR(99) NOT NULL,
+    `hobby` VARCHAR(99),
+    `isForbid` TINYINT DEFAULT 0 COMMENT "Is forbidden user",
+    `createdAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uniqName` (`name`)
+) COMMENT "User Table";

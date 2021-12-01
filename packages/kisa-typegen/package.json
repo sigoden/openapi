@@ -1,7 +1,7 @@
 {
   "name": "kisa-typegen",
-  "version": "0.2.0",
-  "description": "Typegen tool for kisa",
+  "version": "0.2.1",
+  "description": "Generate api.d.ts for kisa",
   "keywords": [
     "kisa",
     "jsona-openapi",

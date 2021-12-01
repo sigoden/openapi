@@ -1,0 +1,33 @@
+{
+  "name": "sql-openapi-gen",
+  "version": "0.1.0",
+  "description": "Generate jsona openapi from sql file",
+  "keywords": [
+    "kisa",
+    "jsona-openapi",
+    "generate",
+    "openapi",
+    "sql"
+  ],
+  "bin": "index.js",
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/openapi/tree/main/packages/sql-openapi-gen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/openapi.git",
+    "directory": "packages/sql-openapi-gen"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {},
+  "dependencies": {
+    "change-case": "^4.1.2",
+    "sql-ddl-to-json-schema": "^4.0.6",
+    "yargs": "^17.2.1"
+  }
+}
