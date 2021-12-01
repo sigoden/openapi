@@ -200,7 +200,7 @@ class Builder {
         if (type === "array") {
           const elemSchema = schema.items;
           const elemType = getType(elemSchema);
-          if (isCombile(elemSchema)) {
+          if (!elemSchema || isCombile(elemSchema)) {
             this.writeln(`${safeName}${optional}: any[];`);
           } else if (isScalar(elemType)) {
             this.writeln(`${safeName}${optional}: ${elemType}[];`);
