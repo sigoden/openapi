@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "dag-map": "^2.0.2",
-    "jsona-openapi-types": "workspace:^",
+    "jsona-openapi-types": "^0.1.2",
     "lodash.get": "^4.4.2",
     "traverse": "^0.6.6"
   }

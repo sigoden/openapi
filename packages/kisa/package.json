@@ -34,7 +34,7 @@
     "@types/koa": "^2.13.4",
     "@types/koa__router": "^8.0.10",
     "koa": "^2.13.4",
-    "use-openapi": "workspace:^"
+    "use-openapi": "^0.6.1"
   },
   "devDependencies": {
     "@types/koa-bodyparser": "^4.3.4",

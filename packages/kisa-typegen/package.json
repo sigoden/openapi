@@ -27,8 +27,8 @@
   "dependencies": {
     "js-yaml": "^4.1.0",
     "jsona-openapi-js": "^0.3.1",
-    "typegen-openapi": "workspace:^",
-    "use-openapi": "workspace:^",
+    "jsona-openapi-deref": "^0.1.0",
+    "use-openapi": "^0.6.1",
     "yargs": "^17.2.1"
   }
 }
