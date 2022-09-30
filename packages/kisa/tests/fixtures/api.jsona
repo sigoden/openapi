@@ -36,7 +36,7 @@
       }
     },
     res: {
-      200: { @save("Post")
+      200: { @def("Post")
         id: 1,
         userId: 1,
         title: 'How to write blog?',

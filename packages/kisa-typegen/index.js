@@ -3,7 +3,7 @@
 const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
-const { parse } = require("jsona-openapi-js");
+const { parse } = require("@jsona/openapi");
 const { parseOperations } = require("use-openapi");
 const { generate } = require("typegen-openapi");
 
@@ -33,7 +33,22 @@ function load(file) {
   } else if (ext === ".yaml" || ext === ".yml") {
     return yaml.load(content);
   } else if (ext === ".jsona") {
-    return parse(content);
+    const { value, errors } = parse(content);
+    if (errors) {
+      throw new Error(
+        `invalid jsona:\n` +
+          errors
+            .map((v) => {
+              if (v.range) {
+                return `  ${v.message} at [Ln ${v.range.start.line}, Col ${v.range.start.column}]`;
+              } else {
+                return `  ${v.message}`;
+              }
+            })
+            .join("\n")
+      );
+    }
+    return value;
   }
 }
 

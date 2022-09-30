@@ -1,10 +1,7 @@
 {
   "scripts": {
     "lint": "eslint .",
-    "test": "jest",
-    "build": "tsc -p tsconfig.build.json",
-    "clean": "rimraf dist",
-    "prepublishOnly": "npm run -s clean && npm run -s build"
+    "test": "jest"
   },
   "devDependencies": {
     "@types/jest": "^27.0.3",

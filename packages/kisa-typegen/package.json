@@ -1,6 +1,6 @@
 {
   "name": "kisa-typegen",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Generate api.d.ts for kisa",
   "keywords": [
     "kisa",
@@ -17,16 +17,15 @@
   "license": "MIT",
   "bin": "index.js",
   "files": [
-    "dist"
+    "index.js"
   ],
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-  },
+  "scripts": {},
   "dependencies": {
+    "@jsona/openapi": "^0.2.5",
     "js-yaml": "^4.1.0",
-    "jsona-openapi-js": "^0.3.1",
     "jsona-openapi-deref": "^0.1.0",
     "use-openapi": "^0.6.1",
     "yargs": "^17.2.1"
