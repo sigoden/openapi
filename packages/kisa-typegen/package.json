@@ -1,6 +1,6 @@
 {
   "name": "kisa-typegen",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Generate api.d.ts for kisa",
   "keywords": [
     "kisa",

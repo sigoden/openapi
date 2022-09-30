@@ -36,11 +36,11 @@ function load(file) {
     const { value, errors } = parse(content);
     if (errors) {
       throw new Error(
-        `invalid jsona:\n` +
+        `invalid jsona\n` +
           errors
             .map((v) => {
               if (v.range) {
-                return `  ${v.message} at [Ln ${v.range.start.line}, Col ${v.range.start.column}]`;
+                return `  ${v.message} (${file}:${v.range.start.line}:${v.range.start.column})`;
               } else {
                 return `  ${v.message}`;
               }
