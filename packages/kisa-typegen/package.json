@@ -1,6 +1,6 @@
 {
   "name": "kisa-typegen",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Generate api.d.ts for kisa",
   "keywords": [
     "kisa",
@@ -27,7 +27,8 @@
     "@jsona/openapi": "^0.2.5",
     "js-yaml": "^4.1.0",
     "jsona-openapi-deref": "^0.1.0",
+    "typegen-openapi": "^0.2.1",
     "use-openapi": "^0.6.1",
-    "yargs": "^17.2.1"
+    "yargs": "^17.5.1"
   }
 }
