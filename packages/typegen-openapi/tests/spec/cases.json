@@ -103,9 +103,7 @@
                           "example": 3
                         }
                       },
-                      "required": [
-                        "a"
-                      ]
+                      "required": ["a"]
                     },
                     "maxItems": 3
                   },
@@ -171,10 +169,7 @@
                           "example": 4
                         }
                       },
-                      "required": [
-                        "a",
-                        "b"
-                      ]
+                      "required": ["a", "b"]
                     },
                     "object2": {
                       "$ref": "#/components/schemas/object1"
@@ -208,10 +203,7 @@
                       "example": "no model"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -236,10 +228,7 @@
             "example": 4
           }
         },
-        "required": [
-          "a",
-          "b"
-        ]
+        "required": ["a", "b"]
       }
     },
     "securitySchemes": {

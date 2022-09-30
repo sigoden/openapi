@@ -5,11 +5,13 @@ Generate jsona openapi from sql file
 ## Get Started
 
 1. install tool
+
 ```
 npm i -g sql-openapi-gen
 ```
 
 2. prepare sql file
+
 ```sql
  CREATE TABLE `User` (
     `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -29,6 +31,7 @@ sql-openapi-gen db.sql
 ```
 
 will print
+
 ```json
   listUsers: { @endpoint({summary:"list user records"})
     route: "GET /users",

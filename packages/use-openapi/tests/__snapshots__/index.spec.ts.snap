@@ -1,50 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`parsed route object 1`] = `
-Object {
+{
   "method": "put",
   "operationId": "updatePet",
   "path": "/pet",
-  "reqSchema": Object {
-    "properties": Object {
-      "body": Object {
-        "properties": Object {
-          "category": Object {
-            "properties": Object {
-              "id": Object {
+  "reqSchema": {
+    "properties": {
+      "body": {
+        "properties": {
+          "category": {
+            "properties": {
+              "id": {
                 "example": 1,
                 "format": "int64",
                 "type": "integer",
               },
-              "name": Object {
+              "name": {
                 "example": "Dogs",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "id",
               "name",
             ],
             "type": "object",
           },
-          "id": Object {
+          "id": {
             "example": 10,
             "format": "int64",
             "type": "integer",
           },
-          "name": Object {
+          "name": {
             "example": "doggie",
             "type": "string",
           },
-          "photoUrls": Object {
-            "items": Object {
+          "photoUrls": {
+            "items": {
               "example": "<url:img>",
               "type": "string",
             },
             "type": "array",
           },
-          "status": Object {
-            "enum": Array [
+          "status": {
+            "enum": [
               "available",
               "pending",
               "sold",
@@ -52,20 +52,20 @@ Object {
             "example": "available",
             "type": "string",
           },
-          "tags": Object {
-            "items": Object {
-              "properties": Object {
-                "id": Object {
+          "tags": {
+            "items": {
+              "properties": {
+                "id": {
                   "example": 1,
                   "format": "int64",
                   "type": "integer",
                 },
-                "name": Object {
+                "name": {
                   "example": "dog",
                   "type": "string",
                 },
               },
-              "required": Array [
+              "required": [
                 "id",
                 "name",
               ],
@@ -74,7 +74,7 @@ Object {
             "type": "array",
           },
         },
-        "required": Array [
+        "required": [
           "id",
           "name",
           "category",
@@ -85,48 +85,48 @@ Object {
         "type": "object",
       },
     },
-    "required": Array [],
+    "required": [],
     "type": "object",
   },
-  "resSchema": Object {
-    "200": Object {
-      "properties": Object {
-        "category": Object {
-          "properties": Object {
-            "id": Object {
+  "resSchema": {
+    "200": {
+      "properties": {
+        "category": {
+          "properties": {
+            "id": {
               "example": 1,
               "format": "int64",
               "type": "integer",
             },
-            "name": Object {
+            "name": {
               "example": "Dogs",
               "type": "string",
             },
           },
-          "required": Array [
+          "required": [
             "id",
             "name",
           ],
           "type": "object",
         },
-        "id": Object {
+        "id": {
           "example": 10,
           "format": "int64",
           "type": "integer",
         },
-        "name": Object {
+        "name": {
           "example": "doggie",
           "type": "string",
         },
-        "photoUrls": Object {
-          "items": Object {
+        "photoUrls": {
+          "items": {
             "example": "<url:img>",
             "type": "string",
           },
           "type": "array",
         },
-        "status": Object {
-          "enum": Array [
+        "status": {
+          "enum": [
             "available",
             "pending",
             "sold",
@@ -134,20 +134,20 @@ Object {
           "example": "available",
           "type": "string",
         },
-        "tags": Object {
-          "items": Object {
-            "properties": Object {
-              "id": Object {
+        "tags": {
+          "items": {
+            "properties": {
+              "id": {
                 "example": 1,
                 "format": "int64",
                 "type": "integer",
               },
-              "name": Object {
+              "name": {
                 "example": "dog",
                 "type": "string",
               },
             },
-            "required": Array [
+            "required": [
               "id",
               "name",
             ],
@@ -156,7 +156,7 @@ Object {
           "type": "array",
         },
       },
-      "required": Array [
+      "required": [
         "id",
         "name",
         "category",
@@ -166,30 +166,30 @@ Object {
       ],
       "type": "object",
     },
-    "400": Object {
+    "400": {
       "description": "Invalid ID supplied",
       "example": "",
       "type": "string",
     },
-    "404": Object {
+    "404": {
       "description": "Pet not found",
       "example": "",
       "type": "string",
     },
-    "405": Object {
+    "405": {
       "description": "Validation exception",
       "example": "",
       "type": "string",
     },
   },
-  "security": Array [
-    Object {
-      "petstore_auth": Array [
+  "security": [
+    {
+      "petstore_auth": [
         "write:pets",
         "read:pets",
       ],
     },
   ],
-  "xProps": Object {},
+  "xProps": {},
 }
 `;

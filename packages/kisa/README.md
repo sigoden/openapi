@@ -45,10 +45,9 @@ const { mountKisa } = useKisa<
   },
 });
 
-kisa.handlers.login = async (ctx) => {
-}
+kisa.handlers.login = async (ctx) => {};
 
 mountKisa(router);
 app.use(router.routes());
-app.listen(3000)
+app.listen(3000);
 ```

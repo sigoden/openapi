@@ -6,5 +6,5 @@ Deref openapi spec.
 
 ```ts
 import deref from "jsona-openapi-deref";
-deref(spec)
+deref(spec);
 ```

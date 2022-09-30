@@ -27,7 +27,7 @@
   "scripts": {},
   "dependencies": {
     "change-case": "^4.1.2",
-    "sql-ddl-to-json-schema": "^4.0.6",
-    "yargs": "^17.2.1"
+    "sql-ddl-to-json-schema": "^4.0.7",
+    "yargs": "^17.5.1"
   }
 }

@@ -1,3 +1,3 @@
 # use-openapi
 
-Generate operations from openapi object. 
+Generate operations from openapi object.

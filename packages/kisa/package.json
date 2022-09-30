@@ -1,6 +1,6 @@
 {
   "name": "kisa",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A web framework based on koa and openapi",
   "keywords": [
     "kisa",
@@ -30,16 +30,16 @@
     "prepublishOnly": "npm run -s clean && npm run -s build"
   },
   "dependencies": {
-    "@koa/router": "^10.1.1",
-    "@types/koa": "^2.13.4",
-    "@types/koa__router": "^8.0.10",
+    "@koa/router": "^12.0.0",
+    "@types/koa": "^2.13.5",
+    "@types/koa__router": "^12.0.0",
     "koa": "^2.13.4",
     "use-openapi": "^0.6.1"
   },
   "devDependencies": {
-    "@types/koa-bodyparser": "^4.3.4",
-    "@types/supertest": "^2.0.11",
+    "@types/koa-bodyparser": "^4.3.8",
+    "@types/supertest": "^2.0.12",
     "koa-bodyparser": "^4.3.0",
-    "supertest": "^6.1.6"
+    "supertest": "^6.2.4"
   }
 }

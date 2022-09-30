@@ -35,9 +35,7 @@
   "paths": {
     "/pet": {
       "put": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Update an existing pet",
         "operationId": "updatePet",
         "requestBody": {
@@ -68,10 +66,7 @@
                         "example": "Dogs"
                       }
                     },
-                    "required": [
-                      "id",
-                      "name"
-                    ]
+                    "required": ["id", "name"]
                   },
                   "photoUrls": {
                     "type": "array",
@@ -95,20 +90,13 @@
                           "example": "dog"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
+                      "required": ["id", "name"]
                     }
                   },
                   "status": {
                     "type": "string",
                     "example": "available",
-                    "enum": [
-                      "available",
-                      "pending",
-                      "sold"
-                    ]
+                    "enum": ["available", "pending", "sold"]
                   }
                 },
                 "required": [
@@ -154,10 +142,7 @@
                           "example": "Dogs"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
+                      "required": ["id", "name"]
                     },
                     "photoUrls": {
                       "type": "array",
@@ -181,20 +166,13 @@
                             "example": "dog"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
+                        "required": ["id", "name"]
                       }
                     },
                     "status": {
                       "type": "string",
                       "example": "available",
-                      "enum": [
-                        "available",
-                        "pending",
-                        "sold"
-                      ]
+                      "enum": ["available", "pending", "sold"]
                     }
                   },
                   "required": [
@@ -248,17 +226,12 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
       "post": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Add a new pet to store",
         "operationId": "addPet",
         "requestBody": {
@@ -289,10 +262,7 @@
                         "example": "Dogs"
                       }
                     },
-                    "required": [
-                      "id",
-                      "name"
-                    ]
+                    "required": ["id", "name"]
                   },
                   "photoUrls": {
                     "type": "array",
@@ -316,20 +286,13 @@
                           "example": "dog"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
+                      "required": ["id", "name"]
                     }
                   },
                   "status": {
                     "type": "string",
                     "example": "available",
-                    "enum": [
-                      "available",
-                      "pending",
-                      "sold"
-                    ]
+                    "enum": ["available", "pending", "sold"]
                   }
                 },
                 "required": [
@@ -375,10 +338,7 @@
                           "example": "Dogs"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
+                      "required": ["id", "name"]
                     },
                     "photoUrls": {
                       "type": "array",
@@ -402,20 +362,13 @@
                             "example": "dog"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
+                        "required": ["id", "name"]
                       }
                     },
                     "status": {
                       "type": "string",
                       "example": "available",
-                      "enum": [
-                        "available",
-                        "pending",
-                        "sold"
-                      ]
+                      "enum": ["available", "pending", "sold"]
                     }
                   },
                   "required": [
@@ -433,19 +386,14 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       }
     },
     "/pet/findByStatus": {
       "get": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Finds Pets by status",
         "operationId": "findPetsByStatus",
         "parameters": [
@@ -456,11 +404,7 @@
               "type": "string",
               "default": "available",
               "example": "available",
-              "enum": [
-                "available",
-                "pending",
-                "sold"
-              ]
+              "enum": ["available", "pending", "sold"]
             },
             "required": false
           }
@@ -497,10 +441,7 @@
                             "example": "Dogs"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
+                        "required": ["id", "name"]
                       },
                       "photoUrls": {
                         "type": "array",
@@ -524,20 +465,13 @@
                               "example": "dog"
                             }
                           },
-                          "required": [
-                            "id",
-                            "name"
-                          ]
+                          "required": ["id", "name"]
                         }
                       },
                       "status": {
                         "type": "string",
                         "example": "available",
-                        "enum": [
-                          "available",
-                          "pending",
-                          "sold"
-                        ]
+                        "enum": ["available", "pending", "sold"]
                       }
                     },
                     "required": [
@@ -556,19 +490,14 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       }
     },
     "/pet/findByTags": {
       "get": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Finds Pets by tags",
         "operationId": "findPetsByTags",
         "parameters": [
@@ -617,10 +546,7 @@
                             "example": "Dogs"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
+                        "required": ["id", "name"]
                       },
                       "photoUrls": {
                         "type": "array",
@@ -644,20 +570,13 @@
                               "example": "dog"
                             }
                           },
-                          "required": [
-                            "id",
-                            "name"
-                          ]
+                          "required": ["id", "name"]
                         }
                       },
                       "status": {
                         "type": "string",
                         "example": "available",
-                        "enum": [
-                          "available",
-                          "pending",
-                          "sold"
-                        ]
+                        "enum": ["available", "pending", "sold"]
                       }
                     },
                     "required": [
@@ -676,19 +595,14 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       }
     },
     "/pet/{petId}": {
       "get": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Find pet by ID",
         "operationId": "getPetById",
         "parameters": [
@@ -733,10 +647,7 @@
                           "example": "Dogs"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
+                      "required": ["id", "name"]
                     },
                     "photoUrls": {
                       "type": "array",
@@ -760,20 +671,13 @@
                             "example": "dog"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name"
-                        ]
+                        "required": ["id", "name"]
                       }
                     },
                     "status": {
                       "type": "string",
                       "example": "available",
-                      "enum": [
-                        "available",
-                        "pending",
-                        "sold"
-                      ]
+                      "enum": ["available", "pending", "sold"]
                     }
                   },
                   "required": [
@@ -792,17 +696,12 @@
         "security": [
           {
             "api_key": [],
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
       "post": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Updates a pet in the store with form data",
         "operationId": "updatePetWithForm",
         "parameters": [
@@ -851,17 +750,12 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       },
       "delete": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Deletes a pet",
         "operationId": "deletePet",
         "parameters": [
@@ -901,19 +795,14 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       }
     },
     "/pet/{petId}/uploadImage": {
       "post": {
-        "tags": [
-          "pet"
-        ],
+        "tags": ["pet"],
         "summary": "Uploads an pet image",
         "operationId": "uploadPetImage",
         "parameters": [
@@ -967,10 +856,7 @@
                       "example": "OK"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -978,19 +864,14 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
+            "petstore_auth": ["write:pets", "read:pets"]
           }
         ]
       }
     },
     "/store/inventory": {
       "post": {
-        "tags": [
-          "store"
-        ],
+        "tags": ["store"],
         "summary": "Returns pet inventories by status",
         "operationId": "getInventory",
         "x-swagger-router-controller": "OrderController",
@@ -1008,9 +889,7 @@
                       "example": 0
                     }
                   },
-                  "required": [
-                    "additionalProperties"
-                  ]
+                  "required": ["additionalProperties"]
                 }
               }
             }
@@ -1025,9 +904,7 @@
     },
     "/store/order": {
       "post": {
-        "tags": [
-          "store"
-        ],
+        "tags": ["store"],
         "summary": "Returns pet inventories by status",
         "operationId": "placeOrder",
         "x-swagger-router-controller": "OrderController",
@@ -1131,9 +1008,7 @@
     },
     "/store/order/{orderId}": {
       "get": {
-        "tags": [
-          "store"
-        ],
+        "tags": ["store"],
         "summary": "Find purchase order by ID",
         "operationId": "getOrderById",
         "x-swagger-router-controller": "OrderController",
@@ -1187,9 +1062,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "store"
-        ],
+        "tags": ["store"],
         "summary": "Delete purchase order by ID",
         "operationId": "deleteOrder",
         "x-swagger-router-controller": "OrderController",
@@ -1235,9 +1108,7 @@
     },
     "/user": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Create user",
         "operationId": "createUser",
         "requestBody": {
@@ -1358,9 +1229,7 @@
     },
     "/user/createWithList": {
       "post": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Create user",
         "operationId": "createUsersWithListInput",
         "requestBody": {
@@ -1484,9 +1353,7 @@
     },
     "/user/login": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Logs user into the system",
         "operationId": "loginUser",
         "parameters": [
@@ -1548,9 +1415,7 @@
     },
     "/user/logout": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
         "responses": {
@@ -1570,9 +1435,7 @@
     },
     "/user/{username}": {
       "get": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Get user by user name",
         "operationId": "getUserByName",
         "parameters": [
@@ -1600,9 +1463,7 @@
         }
       },
       "put": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Update user",
         "operationId": "updateUser",
         "parameters": [
@@ -1641,9 +1502,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "user"
-        ],
+        "tags": ["user"],
         "summary": "Delete user",
         "operationId": "deleteUser",
         "parameters": [
@@ -1701,10 +1560,7 @@
             "example": "Dogs"
           }
         },
-        "required": [
-          "id",
-          "name"
-        ]
+        "required": ["id", "name"]
       },
       "Tag": {
         "type": "array",
@@ -1721,10 +1577,7 @@
               "example": "dog"
             }
           },
-          "required": [
-            "id",
-            "name"
-          ]
+          "required": ["id", "name"]
         }
       },
       "Pet": {
@@ -1752,10 +1605,7 @@
                 "example": "Dogs"
               }
             },
-            "required": [
-              "id",
-              "name"
-            ]
+            "required": ["id", "name"]
           },
           "photoUrls": {
             "type": "array",
@@ -1779,30 +1629,16 @@
                   "example": "dog"
                 }
               },
-              "required": [
-                "id",
-                "name"
-              ]
+              "required": ["id", "name"]
             }
           },
           "status": {
             "type": "string",
             "example": "available",
-            "enum": [
-              "available",
-              "pending",
-              "sold"
-            ]
+            "enum": ["available", "pending", "sold"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "category",
-          "photoUrls",
-          "tags",
-          "status"
-        ]
+        "required": ["id", "name", "category", "photoUrls", "tags", "status"]
       },
       "ApiResponse": {
         "type": "object",
@@ -1817,10 +1653,7 @@
             "example": "OK"
           }
         },
-        "required": [
-          "code",
-          "message"
-        ]
+        "required": ["code", "message"]
       },
       "Order": {
         "type": "object",

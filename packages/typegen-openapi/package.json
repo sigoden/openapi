@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "change-case": "^4.1.2",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.8",
     "jsona-openapi-types": "^0.1.2",
     "jsona-openapi-deref": "^0.1.0",
     "lodash.get": "^4.4.2",

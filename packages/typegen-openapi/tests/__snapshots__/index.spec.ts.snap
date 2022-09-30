@@ -11,7 +11,7 @@ exports[`it should works 1`] = `
       kind?: string;
     };
     headers: {
-      \\"X-App-Key\\": string;
+      "X-App-Key": string;
     };
     body: {
       null: any;
